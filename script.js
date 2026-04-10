@@ -1,7 +1,7 @@
 // 1. DATABASE OF VIDEOS
 const videoData = [
     { 
-        url: 'https://archive.org/download/vine-iminmemumscar/vine-iminmemumscar.mp4', 
+        url: 'https://cdn.discordapp.com/attachments/1488322749884534869/1492088075428561016/Im_In_My_Mums_Car_-_Vine.mp4?ex=69da0ece&is=69d8bd4e&hm=24891a8d32eee2b898dee0f7502440dc731e5dcfc3bd718e6009765ffd052094&', 
         user: '@iminmemumscar', 
         desc: 'Broom broom! #classic #vine', 
         likes: '99k' 
