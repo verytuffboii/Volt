@@ -1,98 +1,113 @@
-// 1. DATABASE OF VIDEOS
-const videoData = [
-    { 
-        url: 'https://cdn.discordapp.com/attachments/1488322749884534869/1492088075428561016/Im_In_My_Mums_Car_-_Vine.mp4?ex=69da0ece&is=69d8bd4e&hm=24891a8d32eee2b898dee0f7502440dc731e5dcfc3bd718e6009765ffd052094&', 
-        user: '@iminmemumscar', 
-        desc: 'Broom broom! #classic #vine', 
-        likes: '99k' 
-    },
-    { 
-        url: 'https://assets.mixkit.co/videos/preview/mixkit-skateboarding-under-a-bridge-4451-large.mp4', 
-        user: '@skater_pro', 
-        desc: 'Landing this took 40 tries. #skate', 
-        likes: '12k' 
-    },
-    { 
-        url: 'https://assets.mixkit.co/videos/preview/mixkit-girl-dancing-under-neon-lights-41221-large.mp4', 
-        user: '@neon_dancer', 
-        desc: 'Night vibes only. 🕺', 
-        likes: '88k' 
-    }
-];
+// 1. CONNECT TO SUPABASE
+const SUPABASE_URL = 'https://iuqhnnsjvmapvscfnxt.supabase.co'; 
+const SUPABASE_KEY = 'PASTE_YOUR_PUBLIC_ANON_KEY_HERE'; // The long string from your screenshot
+
+const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const feed = document.getElementById('video-feed');
 
-// 2. GENERATE THE FEED
-function loadVideos(dataArray) {
-    feed.innerHTML = ''; 
-    dataArray.forEach(data => {
+// 2. FETCH VIDEOS FROM DATABASE
+async function fetchVideos() {
+    const { data, error } = await _supabase
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error("Error loading:", error);
+    } else {
+        renderVideos(data);
+    }
+}
+
+// 3. RENDER FEED
+function renderVideos(posts) {
+    feed.innerHTML = '';
+    posts.forEach(post => {
         const card = document.createElement('div');
         card.className = 'video-card';
         card.innerHTML = `
-            <video src="${data.url}" loop playsinline></video>
-            
+            <video src="${post.video_url}" loop playsinline></video>
             <div class="sidebar">
-                <div class="action-item"><div class="icon-circle">❤️</div><span>${data.likes}</span></div>
+                <div class="action-item"><div class="icon-circle">❤️</div><span>12k</span></div>
                 <div class="action-item"><div class="icon-circle">💬</div><span>42</span></div>
-                <div class="action-item"><div class="icon-circle">🔗</div><span>Share</span></div>
             </div>
-
             <div class="video-info">
-                <h3>${data.user}</h3>
-                <p>${data.desc}</p>
+                <h3>@${post.username}</h3>
+                <p>${post.caption}</p>
             </div>
         `;
 
-        // PLAY/PAUSE ON CLICK LOGIC
-        const videoElement = card.querySelector('video');
-        videoElement.addEventListener('click', () => {
-            if (videoElement.paused) {
-                videoElement.play();
-                videoElement.style.opacity = "1";
-            } else {
-                videoElement.pause();
-                videoElement.style.opacity = "0.7"; // Dim when paused
-            }
-        });
-
+        const v = card.querySelector('video');
+        v.addEventListener('click', () => v.paused ? v.play() : v.pause());
         feed.appendChild(card);
     });
-    
-    // Observer starts playing videos when they scroll into view
-    const allCards = document.querySelectorAll('.video-card');
-    allCards.forEach(card => observer.observe(card));
+
+    const cards = document.querySelectorAll('.video-card');
+    cards.forEach(card => observer.observe(card));
 }
 
-// 3. AUTO-PLAY CONTROLLER
+// 4. HANDLE UPLOAD
+async function handleUpload() {
+    const btn = document.getElementById('publish-btn');
+    const file = document.getElementById('up-file').files[0];
+    const user = document.getElementById('up-user').value;
+    const desc = document.getElementById('up-desc').value;
+
+    if (!file || !user) return alert("Missing info!");
+
+    btn.innerText = "UPLOADING...";
+    btn.disabled = true;
+
+    // A. Upload File to Storage
+    const fileName = `${Date.now()}_${file.name}`;
+    const { data: uploadData, error: uploadError } = await _supabase.storage
+        .from('videos')
+        .upload(fileName, file);
+
+    if (uploadError) {
+        alert("Upload error: " + uploadError.message);
+        btn.innerText = "PUBLISH";
+        btn.disabled = false;
+        return;
+    }
+
+    // B. Get Link
+    const { data: urlData } = _supabase.storage.from('videos').getPublicUrl(fileName);
+
+    // C. Save to Table
+    const { error: dbError } = await _supabase
+        .from('posts')
+        .insert([{ username: user, caption: desc, video_url: urlData.publicUrl }]);
+
+    if (dbError) {
+        alert("Database error: " + dbError.message);
+    } else {
+        alert("Success!");
+        location.reload();
+    }
+}
+
+// UI HELPERS
+function openUpload() { document.getElementById('upload-modal').style.display = 'block'; }
+function closeUpload() { document.getElementById('upload-modal').style.display = 'none'; }
+
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         const video = entry.target.querySelector('video');
         if (entry.isIntersecting) {
-            video.play().catch(() => {}); // Play when visible
-            video.style.opacity = "1";
+            video.play().catch(() => {});
         } else {
             video.pause();
-            video.currentTime = 0; // Reset to start when scrolled away
+            video.currentTime = 0;
         }
     });
 }, { threshold: 0.7 });
 
-// 4. SEARCH LOGIC
-function filterVideos() {
-    const term = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = videoData.filter(v => 
-        v.user.toLowerCase().includes(term) || 
-        v.desc.toLowerCase().includes(term)
-    );
-    loadVideos(filtered);
-}
-
-// 5. START BUTTON
 function startApp() {
     document.getElementById('start-overlay').style.display = 'none';
-    const allVideos = document.querySelectorAll('video');
-    allVideos.forEach(v => v.muted = false); // Unmute everything once user interacts
+    document.querySelectorAll('video').forEach(v => v.muted = false);
 }
 
-// INITIALIZE
-loadVideos(videoData);
+// LOAD ON START
+fetchVideos();
