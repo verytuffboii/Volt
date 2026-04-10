@@ -1,6 +1,6 @@
 // 1. CONNECT TO SUPABASE
-const SUPABASE_URL = 'https://iuqhnnsjvwmapvscfnxt.supabase.co'; 
-const SUPABASE_KEY = 'sb_publishable_VP8vtCVFAq_jjv5vFCY-1Q_9jwJp48b'; // The long string from your screenshot
+const SUPABASE_URL = 'https://iuqhnnsjvmapvscfnxt.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_VP8vtCVFAq_jjv5vFCY-1Q_9jwJp48b'; // Use your full public key here
 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
