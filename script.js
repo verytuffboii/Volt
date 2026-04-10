@@ -1,6 +1,6 @@
 // 1. CONNECT TO SUPABASE
 const SUPABASE_URL = 'https://iuqhnnsjvmapvscfnxt.supabase.co'; 
-const SUPABASE_KEY = 'PASTE_YOUR_PUBLIC_ANON_KEY_HERE'; // The long string from your screenshot
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1cWhubnNqdndtYXB2c2Nmbnh0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3OTMzNjgsImV4cCI6MjA5MTM2OTM2OH0.BHilMzUVb9bcPjxqNSRovHQabYFTn5jzPOyevcW5LOY'; // The long string from your screenshot
 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
