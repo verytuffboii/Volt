@@ -3,26 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VOLT | 7-Second Loops</title>
+    <title>VOLT | Short Loops</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
     <nav class="top-nav">
         <div class="logo">VOLT</div>
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search creators..." onkeyup="filterVideos()">
+            <input type="text" id="searchInput" placeholder="Search..." onkeyup="filterVideos()">
         </div>
-        <div class="profile-icon">👤</div>
+        <div class="nav-right">
+            <button class="upload-btn" onclick="openUpload()">+</button>
+            <span class="profile-icon">👤</span>
+        </div>
     </nav>
 
     <main id="video-feed" class="video-container"></main>
 
+    <div id="upload-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#111; padding:30px; border-radius:15px; z-index:1000; border:2px solid #00ff88; width: 90%; max-width: 400px;">
+        <h2 style="color:#00ff88; margin-bottom:15px;">Upload Loop</h2>
+        <input type="text" id="up-user" placeholder="Username" style="display:block; margin-bottom:10px; width:100%; padding:10px; background:#222; border:1px solid #444; color:white;">
+        <input type="text" id="up-desc" placeholder="Caption" style="display:block; margin-bottom:10px; width:100%; padding:10px; background:#222; border:1px solid #444; color:white;">
+        <input type="file" id="up-file" accept="video/mp4" style="color:white; margin-bottom:20px;">
+        
+        <div style="display:flex; gap:10px;">
+            <button onclick="handleUpload()" id="publish-btn" style="flex:1; background:#00ff88; border:none; padding:12px; cursor:pointer; font-weight:bold; border-radius:5px;">PUBLISH</button>
+            <button onclick="closeUpload()" style="flex:1; background:#333; color:white; border:none; padding:12px; cursor:pointer; border-radius:5px;">CANCEL</button>
+        </div>
+    </div>
+
     <div id="start-overlay">
         <div class="welcome-box">
             <h1>VOLT</h1>
-            <p>Short. Fast. Loops.</p>
-            <button onclick="startApp()">START BROWSING</button>
+            <button onclick="startApp()">ENTER</button>
         </div>
     </div>
 
