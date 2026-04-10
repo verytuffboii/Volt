@@ -1,14 +1,30 @@
+// 1. DATABASE OF VIDEOS
 const videoData = [
-    { url: 'https://cdn.discordapp.com/attachments/1488322749884534869/1492088075428561016/Im_In_My_Mums_Car_-_Vine.mp4?ex=69da0ece&is=69d8bd4e&hm=24891a8d32eee2b898dee0f7502440dc731e5dcfc3bd718e6009765ffd052094&', user: '@iminmemumscar', desc: 'Im in me mums car', likes: '12k' },
-    { url: 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-ocean-top-view-938-large.mp4', user: '@nature_ocean', desc: '7 seconds of pure peace. #zen', likes: '5k' },
-    { url: 'https://assets.mixkit.co/videos/preview/mixkit-girl-dancing-under-neon-lights-41221-large.mp4', user: '@neon_dancer', desc: 'Night vibes only. 🕺', likes: '88k' },
-    { url: 'https://assets.mixkit.co/videos/preview/mixkit-man-under-multicolored-lights-1237-large.mp4', user: '@light_show', desc: 'Glitch in the matrix.', likes: '2k' }
+    { 
+        url: 'https://archive.org/download/vine-iminmemumscar/vine-iminmemumscar.mp4', 
+        user: '@iminmemumscar', 
+        desc: 'Broom broom! #classic #vine', 
+        likes: '99k' 
+    },
+    { 
+        url: 'https://assets.mixkit.co/videos/preview/mixkit-skateboarding-under-a-bridge-4451-large.mp4', 
+        user: '@skater_pro', 
+        desc: 'Landing this took 40 tries. #skate', 
+        likes: '12k' 
+    },
+    { 
+        url: 'https://assets.mixkit.co/videos/preview/mixkit-girl-dancing-under-neon-lights-41221-large.mp4', 
+        user: '@neon_dancer', 
+        desc: 'Night vibes only. 🕺', 
+        likes: '88k' 
+    }
 ];
 
 const feed = document.getElementById('video-feed');
 
+// 2. GENERATE THE FEED
 function loadVideos(dataArray) {
-    feed.innerHTML = ''; // Clear feed
+    feed.innerHTML = ''; 
     dataArray.forEach(data => {
         const card = document.createElement('div');
         card.className = 'video-card';
@@ -26,39 +42,57 @@ function loadVideos(dataArray) {
                 <p>${data.desc}</p>
             </div>
         `;
+
+        // PLAY/PAUSE ON CLICK LOGIC
+        const videoElement = card.querySelector('video');
+        videoElement.addEventListener('click', () => {
+            if (videoElement.paused) {
+                videoElement.play();
+                videoElement.style.opacity = "1";
+            } else {
+                videoElement.pause();
+                videoElement.style.opacity = "0.7"; // Dim when paused
+            }
+        });
+
         feed.appendChild(card);
     });
     
-    // Re-attach observer to new cards
-    const cards = document.querySelectorAll('.video-card');
-    cards.forEach(card => observer.observe(card));
+    // Observer starts playing videos when they scroll into view
+    const allCards = document.querySelectorAll('.video-card');
+    allCards.forEach(card => observer.observe(card));
 }
 
-// Search Functionality
-function filterVideos() {
-    const term = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = videoData.filter(v => v.user.toLowerCase().includes(term));
-    loadVideos(filtered);
-}
-
+// 3. AUTO-PLAY CONTROLLER
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         const video = entry.target.querySelector('video');
         if (entry.isIntersecting) {
-            video.play().catch(e => console.log("Waiting for user interaction"));
+            video.play().catch(() => {}); // Play when visible
+            video.style.opacity = "1";
         } else {
             video.pause();
-            video.currentTime = 0;
+            video.currentTime = 0; // Reset to start when scrolled away
         }
     });
-}, { threshold: 0.6 });
+}, { threshold: 0.7 });
 
-function startApp() {
-    document.getElementById('start-overlay').style.display = 'none';
-    const videos = document.querySelectorAll('video');
-    // Muted is false because user clicked a button to enter
-    videos.forEach(v => v.muted = false); 
+// 4. SEARCH LOGIC
+function filterVideos() {
+    const term = document.getElementById('searchInput').value.toLowerCase();
+    const filtered = videoData.filter(v => 
+        v.user.toLowerCase().includes(term) || 
+        v.desc.toLowerCase().includes(term)
+    );
+    loadVideos(filtered);
 }
 
-// Initial Load
+// 5. START BUTTON
+function startApp() {
+    document.getElementById('start-overlay').style.display = 'none';
+    const allVideos = document.querySelectorAll('video');
+    allVideos.forEach(v => v.muted = false); // Unmute everything once user interacts
+}
+
+// INITIALIZE
 loadVideos(videoData);
