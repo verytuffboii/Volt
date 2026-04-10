@@ -1,5 +1,5 @@
 const videoData = [
-    { url: 'https://cdn.discordapp.com/attachments/1488322749884534869/1492088075428561016/Im_In_My_Mums_Car_-_Vine.mp4?ex=69da0ece&is=69d8bd4e&hm=24891a8d32eee2b898dee0f7502440dc731e5dcfc3bd718e6009765ffd052094&', user: '@skater_pro', desc: 'Landing this took 40 tries. #skate', likes: '12k' },
+    { url: 'https://cdn.discordapp.com/attachments/1488322749884534869/1492088075428561016/Im_In_My_Mums_Car_-_Vine.mp4?ex=69da0ece&is=69d8bd4e&hm=24891a8d32eee2b898dee0f7502440dc731e5dcfc3bd718e6009765ffd052094&', user: '@iminmemumscar', desc: 'Im in me mums car', likes: '12k' },
     { url: 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-ocean-top-view-938-large.mp4', user: '@nature_ocean', desc: '7 seconds of pure peace. #zen', likes: '5k' },
     { url: 'https://assets.mixkit.co/videos/preview/mixkit-girl-dancing-under-neon-lights-41221-large.mp4', user: '@neon_dancer', desc: 'Night vibes only. 🕺', likes: '88k' },
     { url: 'https://assets.mixkit.co/videos/preview/mixkit-man-under-multicolored-lights-1237-large.mp4', user: '@light_show', desc: 'Glitch in the matrix.', likes: '2k' }
